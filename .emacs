@@ -32,8 +32,8 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(company dashboard doom-modeline helm lsp-mode lsp-ui magit neotree
-             page-break-lines treemacs which-key-posframe)))
+   '(company dashboard diff-hl doom-modeline helm lsp-mode lsp-ui magit
+             neotree page-break-lines treemacs which-key-posframe)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -52,7 +52,7 @@
 (require 'lsp-ui)
 (add-hook 'lsp-mode-hook #'lsp-ui-mode)
 
-;; ruff
+;; lsp-mode
 (require 'lsp-mode)
 
 ;; Register ruff-lsp client
@@ -124,3 +124,21 @@
   (setq header-line-format '((:eval (my-header-line)))))
 
 (add-hook 'prog-mode-hook #'enable-incline-style-header)
+
+;; JS LSP
+(add-hook 'js-mode-hook #'lsp)      ;; for js-mode
+
+;; DIFF-HL
+(require 'diff-hl)
+
+;; Enable diff-hl in all programming modes
+(add-hook 'prog-mode-hook 'diff-hl-mode)
+
+;; Enable real-time updates in the buffer (optional)
+(diff-hl-flydiff-mode)
+
+;; Integrate with Magit to refresh after commits
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+
+(add-hook 'text-mode-hook 'diff-hl-mode)
+(add-hook 'conf-mode-hook 'diff-hl-mode)
