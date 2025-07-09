@@ -22,18 +22,12 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-(unless (package-installed-p 'lsp-mode)
-  (package-refresh-contents)
-  (package-install 'clangd))
-
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(company dashboard diff-hl doom-modeline helm lsp-mode lsp-ui magit
-             neotree page-break-lines which-key-posframe)))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -44,9 +38,44 @@
 ;; lsp-mode
 (require 'lsp-mode)
 
+;; C
+;; LSP Mode Setup
+(eval-when-compile
+  (require 'use-package))
+
+(use-package lsp-mode
+  :hook ((c-mode c++-mode) . lsp)
+  :commands lsp)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+(use-package company
+  :config (global-company-mode))
+(unless (package-installed-p 'lsp-mode)
+  (package-refresh-contents)
+  (package-install 'lsp-mode))
+
+(dolist (pkg '(lsp-mode lsp-ui company use-package))
+  (unless (package-installed-p pkg)
+    (package-install pkg)))
+
+(use-package lsp-mode
+  :ensure t
+  :hook ((c-mode c++-mode) . lsp)
+  :commands lsp)
+
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+
+(use-package company
+  :ensure t
+  :config (global-company-mode))
+
 ;; Enable lsp-mode automatically in C/C++ buffers
-(add-hook 'c-mode-hook #'lsp)
-(add-hook 'c++-mode-hook #'lsp)
+;; (add-hook 'c-mode-hook #'lsp)
+;; (add-hook 'c++-mode-hook #'lsp)
 
 ;; Optional: Use lsp-ui for better UI
 (require 'lsp-ui)
@@ -56,19 +85,33 @@
 (require 'lsp-mode)
 
 ;; Register ruff-lsp client
-(lsp-register-client
- (make-lsp-client
-  :new-connection (lsp-stdio-connection "ruff-lsp")
-  :activation-fn (lsp-activate-on "python")
-  :priority -1
-  :server-id 'ruff-lsp))
+;;(lsp-register-client
+;; (make-lsp-client
+;;  :new-connection (lsp-stdio-connection "ruff-lsp")
+;;  :activation-fn (lsp-activate-on "python")
+;;  :priority -1
+;;  :server-id 'ruff-lsp))
 
 ;; Enable lsp-mode in python buffers
-(add-hook 'python-mode-hook #'lsp)
+;; (add-hook 'python-mode-hook #'lsp)
+
+;; Pyright
+(use-package lsp-pyright
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-pyright)
+                         (lsp)))  ; or (lsp-deferred)
+  )
+(with-eval-after-load 'lsp-mode
+  ;; Disable Ruff LSP
+  (setq lsp-disabled-clients '(ruff-lsp))
+)
+
 
 ;; Neotree
 (global-set-key (kbd "C-x e") #'neotree-toggle)
 (setq neo-smart-open t)
+(setq neo-show-hidden-files t)
 
 ;; Shell
 (setq shell-file-name "/bin/bash")
@@ -142,3 +185,12 @@
 
 (add-hook 'text-mode-hook 'diff-hl-mode)
 (add-hook 'conf-mode-hook 'diff-hl-mode)
+
+;; BASH LSP
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :hook ((sh-mode) . lsp))  ;; ← Enable LSP in Bash files
+
+;; Dired REBIND
+(global-set-key (kbd "C-x f") #'dired)
