@@ -33,8 +33,7 @@
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    '(company dashboard diff-hl doom-modeline helm lsp-mode lsp-ui magit
-             neotree page-break-lines tree-sitter treemacs
-             which-key-posframe)))
+             neotree page-break-lines which-key-posframe)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
