@@ -1,7 +1,13 @@
+(scroll-bar-mode -1)
 (set-face-attribute 'default nil :height 220)
 (set-face-background 'default "#222222")
 (set-face-foreground 'default "#ffffff")
+
+;; Line Number
+(set-face-foreground 'line-number-current-line "#ffffff")
+(setq display-line-numbers-type 'relative)
 (global-display-line-numbers-mode t)
+
 (tool-bar-mode -1)
 (setq-default indent-tabs-mode nil) ; use spaces, not tabs
 (setq-default tab-width 4)          ; show tab stops every 4 spaces
@@ -27,7 +33,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages nil))
+ '(package-selected-packages
+   '(ace-window cfrs company dashboard diff-hl doom-modeline go-mode helm
+                hydra lsp-pyright lsp-ui magit neotree
+                page-break-lines pfuture powerline treemacs tsc
+                which-key-posframe)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -194,3 +204,7 @@
 
 ;; Dired REBIND
 (global-set-key (kbd "C-x f") #'dired)
+(put 'upcase-region 'disabled nil)
+
+;; Go
+(add-to-list 'auto-mode-alist '("\\.go\\'" . go-mode))
